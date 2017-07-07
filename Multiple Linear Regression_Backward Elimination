@@ -1,0 +1,46 @@
+# MULTIPLE LINEAR REGRESSION: BACKWARD ELIMINATION
+
+# Predict future profits which startup investors should place their money, want to see which independent variable has the highest effect on the profit and which value governs
+ 
+#Importing the dataset
+dataset = read.csv('50_Startups.csv') # read dataset - set dataset by clicking "more" - "set as working directory"
+#dataset = dataset[, 2:3]
+
+# Encoding categorical data
+dataset$State = factor(dataset$State,
+                         levels = c('New York', 'California', 'Florida'),
+                         labels = c(1, 2, 3)) #numerical vectors. Do not need to create dummy variables.
+
+# Splitting the dataset into the Training set and Test set
+#install.packages('caTools') #install "caTools" library
+library(caTools)#select library
+set.seed(123)
+split = sample.split(dataset$Profit, SplitRatio = 0.8) # Return true or false if set went into training or test
+training_set = subset(dataset, split == TRUE)
+test_set = subset(dataset, split == FALSE)
+
+# Feature Scaling
+#training_set = scale(training_set) # used if factors are not used in table
+#test_set = scale(test_set) # used if factors are not used in table
+# training_set[,2:3] = scale(training_set[,2:3]) #used if factors have been used in table
+# test_set[,2:3] = scale(test_set[,2:3]) #used if factors have been used in table
+
+# Fitting Multiple Linear Regression to the Training Set
+regressor = lm(formula = Profit ~ .,
+               data = training_set) #Not used in backwards elimination
+# Fit Linear Models Function: lm() - used to fit linear models, can also be used to carry our regression, single stratum analysis of variance and covariance
+#Type: summary(regressor) then press enter to see summary information
+#Analysis
+#Look at 't-value' and 'Pr(>|t|)' columns - tells us about the statical significants of the independent variable onto the dependant variable
+#Lower the P-value, the more impact the value has. P value < 5%. Investors should look at'R&D Spend'.
+#State 2 and 3 are Dummy Variables - R takes care of dummy variables
+
+# Predicting the Test Set Results
+y_pred = predict(regressor, newdata = test_set) # Predict regressor and new data- test set.
+# Compare this data to actual test_set data to see the statical significance of the new data set (predicted data set).
+
+
+# Building the Optimal Model using Backward Elimination
+regressor = lm(formula = Profit ~ R.D. Spend + Administration + Marketing.Spend + State,
+               data = data_set) # remove the non statistical columns in the table. Two things we would like to change. Which variables are statistically significant and which are not.
+summary(regressor)# states a summary of data
